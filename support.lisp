@@ -1,9 +1,26 @@
-(in-package :org.kjerkreit.sudoku-solver.support)
+(in-package :org.kjerkreit.sudoku-solver)
 
-(defmacro gen-elements ()
-  "Creates a 2-dim array that represents the rows, columns or boxes of the sudoku board."
-  (make-array (9 9)
-              :element-type 'cell
-              :initial-element nil
+(defun bit-vector (&optional (found nil))
+
+  (make-array 9
+              :element-type 'bit
+              :initial-element (if found nil t)
               :adjustable nil
               :fill-pointer nil))
+
+(defun cell-vector (&optional (board nil))
+
+  (make-array (if board 81 9)
+              :element-type 'cell
+              :adjustable nil
+              :fill-pointer nil))
+
+(defun elt-vector ()
+
+  (make-array 9
+              :element-type 'element
+              :adjustable nil
+              :fill-pointer nil))
+
+(defun read-puzzle ())
+

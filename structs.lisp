@@ -4,17 +4,14 @@
   (row)
   (column)
   (box)
-  (vals '(1 2 3 4 5 6 7 8 9)))
+  (vals (bit-vector)))
+
+(defstruct element
+  (found-vals (bit-vector t))
+  (cells))
 
 (defstruct board
-  (rows (gen-elements))
-  (columns (make-array (9 9)
-                       :element-type 'cell
-                       :initial-element nil
-                       :adjustable nil
-                       :fill-pointer nil))
-  (boxes (make-array (9 9)
-                     :element-type 'cell
-                     :initial-element nil
-                     :adjustable nil
-                     :fill-pointer nil)))
+  (rows (elt-vector))
+  (columns (elt-vector))
+  (boxes (elt-vector))
+  (cells (cell-vector 81)))
