@@ -1,6 +1,6 @@
 (in-package :org.kjerkreit.sudoku-solver)
 
-(defparameter *board*)
+;;(defparameter *board*)
 
 (defconstant +cell-to-box-map+ '((0 0) (0 1) (0 2) (1 0) (1 1) (1 2) (2 0) (2 1) (2 2)
                                  (0 3) (0 4) (0 5) (1 3) (1 4) (1 5) (2 3) (2 4) (2 5)
@@ -32,33 +32,40 @@
 
 (defun construct-board (puzzle)
   "Takes a list of ints and uses them to set up a sudoku board"
+  (declare (optimize (debug 3)))
 
   (let* ((board (make-board))
          (cells (board-cells board))
          (rows  (board-rows board))
          (cols  (board-cols board))
          (boxes (board-boxes board)))
+    (dotimes (i 9)
+      (setf (aref rows i) (make-element))
+      (setf (aref cols i) (make-element))
+      (setf (aref boxes i) (make-element)))
     (loop for cell-val in puzzle
-      for (box-n box-p) in +cell-to-box-map+
-      for count from 0
-      for cell = (aref cells count)
-      for (div rest) = (multiple-value-list (floor count 9))
-      for row = (aref rows div)
-      for col = (aref cols rest)
-      for box = (aref boxes box-n)
-      do (progn
-           (when (/= 0 cell-val)
-             (setf (cell-domain cell) 0)
-             (setf (cell-value cell) cell-val))
-           
-          (setf (aref row rest) cell)
-          (setf (aref col div) cell)
-          (setf (aref box box-p) cell)
+       for (box-n box-p) in +cell-to-box-map+
+       for count from 0
+       for cell = (make-cell)
+       for (div rest) = (multiple-value-list (floor count 9))
+       for row = (aref rows div)
+       for col = (aref cols rest)
+       for box = (aref boxes box-n)
+       until (= 5 count)
+       do (progn
+            (when (/= 0 cell-val)
+              (setf (cell-domain cell) 0)
+              (setf (cell-value cell) cell-val))
+
+            (setf (aref cells count) cell)
+            (setf (aref (element-cells row) rest) cell)
+            (setf (aref (element-cells col) div) cell)
+            (setf (aref (element-cells box) box-p) cell)
           
-          (setf (cell-row cell) row)
-          (setf (cell-col cell) col)
-          (setf (cell-box cell) box)
-           ))
+            (setf (cell-row cell) row)
+            (setf (cell-col cell) col)
+            (setf (cell-box cell) box)
+            ))
     board))
 
     

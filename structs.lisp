@@ -2,10 +2,10 @@
 
 (defstruct cell
   (row nil)
-  (column nil)
+  (col nil)
   (box nil)
   (value 0)
-  (domain 512 :type (unsigned-byte 9)))
+  (domain 512));; :type (unsigned-byte 9)))
 
 (defstruct element
   (found-vals 0)
@@ -27,6 +27,6 @@
 
 (defstruct board
   (rows (elt-vector))
-  (columns (elt-vector))
+  (cols (elt-vector))
   (boxes (elt-vector))
   (cells (cell-vector t)))
