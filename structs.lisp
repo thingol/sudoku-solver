@@ -4,15 +4,16 @@
   (row nil)
   (column nil)
   (box nil)
-  (vals 512 :type (unsigned-byte 9)))
+  (value 0)
+  (domain 512 :type (unsigned-byte 9)))
 
 (defstruct element
   (found-vals 0)
   (cells (cell-vector)))
 
-(defun cell-vector ()
+(defun cell-vector (&optional (board nil))
 
-  (make-array 81
+  (make-array (if board 81 9)
               :element-type 'cell
               :adjustable nil
               :fill-pointer nil))
@@ -28,4 +29,4 @@
   (rows (elt-vector))
   (columns (elt-vector))
   (boxes (elt-vector))
-  (cells (cell-vector)))
+  (cells (cell-vector t)))
