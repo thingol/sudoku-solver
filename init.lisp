@@ -39,32 +39,38 @@
          (rows  (board-rows board))
          (cols  (board-cols board))
          (boxes (board-boxes board)))
+    
+    (log:debug "setting up board elements")
     (dotimes (i 9)
       (setf (aref rows i) (make-element))
       (setf (aref cols i) (make-element))
       (setf (aref boxes i) (make-element)))
+    
+    (log:debug "entering main loop")
     (loop for cell-val in puzzle
        for (box-n box-p) in +cell-to-box-map+
-       for count from 0
+       for count from 0 to 3
        for cell = (make-cell)
        for (div rest) = (multiple-value-list (floor count 9))
        for row = (aref rows div)
        for col = (aref cols rest)
        for box = (aref boxes box-n)
-       until (= 5 count)
        do (progn
+            (log:trace "count has reached " count)
             (when (/= 0 cell-val)
+              (log:trace "cell number " count " has value " cell-val)
               (setf (cell-domain cell) 0)
               (setf (cell-value cell) cell-val))
 
             (setf (aref cells count) cell)
-            (setf (aref (element-cells row) rest) cell)
-            (setf (aref (element-cells col) div) cell)
-            (setf (aref (element-cells box) box-p) cell)
-          
+            (setf (aref (element-cells row) rest) count)
+            (setf (aref (element-cells col) div) count)
+            (setf (aref (element-cells box) box-p) count)
+
             (setf (cell-row cell) row)
             (setf (cell-col cell) col)
             (setf (cell-box cell) box)
+            (log:trace "cell: " cell)
             ))
     board))
 
