@@ -2,13 +2,17 @@
 
 (defstruct cell
   (row nil)
-  (column nil)
+  (col nil)
   (box nil)
-  (vals 512 :type (unsigned-byte 9)))
+  (value 0)
+  (domain 512))
 
 (defstruct element
   (found-vals 0)
-  (cells (cell-vector)))
+  (cells (make-array 9
+                     :element-type 'fixnum
+                     :adjustable nil
+                     :fill-pointer nil)))
 
 (defun cell-vector ()
 
@@ -26,6 +30,6 @@
 
 (defstruct board
   (rows (elt-vector))
-  (columns (elt-vector))
+  (cols (elt-vector))
   (boxes (elt-vector))
   (cells (cell-vector)))
