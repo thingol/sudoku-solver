@@ -1,33 +1,14 @@
 (in-package :org.kjerkreit.sudoku-solver)
 
-;;(defparameter *board*)
-
 (defconstant +cell-to-box-map+ '((0 0) (0 1) (0 2) (1 0) (1 1) (1 2) (2 0) (2 1) (2 2)
                                  (0 3) (0 4) (0 5) (1 3) (1 4) (1 5) (2 3) (2 4) (2 5)
                                  (0 6) (0 7) (0 8) (1 6) (1 7) (1 8) (2 6) (2 7) (2 8)
-                                 3 3 3 4 4 4 5 5 5
-                                 3 3 3 4 4 4 5 5 5
-                                 3 3 3 4 4 4 5 5 5
-                                 6 6 6 7 7 7 8 8 8
-                                 6 6 6 7 7 7 8 8 8
-                                 6 6 6 7 7 7 8 8 8))
-
-#|
-    0         1         2
- 0  1  2  3   4  5   6  7  8
- 9 10 11  12 13 14  15 16 17
-18 19 20  21 22 23  24 25 26
-
-    3         4         5
-27 28 29  30 31 32  33 34 35
-36 37 38  39 40 41  42 43 44
-45 46 47  48 49 50  51 52 53
-
-    6         7         8
-54 55 56  57 58 59  60 61 62
-63 64 65  66 67 68  69 70 71
-72 73 74  75 76 77  78 79 80
-|#
+                                 (3 0) (3 1) (3 2) (4 0) (4 1) (4 2) (5 0) (5 1) (5 2)
+                                 (3 3) (3 4) (3 5) (4 3) (4 4) (4 5) (5 3) (5 4) (5 5)
+                                 (3 6) (3 7) (3 8) (4 6) (4 7) (4 8) (5 6) (5 7) (5 8)
+                                 (6 0) (6 1) (6 2) (7 0) (7 1) (7 2) (8 0) (8 1) (8 2)
+                                 (6 3) (6 4) (6 5) (7 3) (7 4) (7 5) (8 3) (8 4) (8 5)
+                                 (6 6) (6 7) (6 8) (7 6) (7 7) (7 8) (8 6) (8 7) (8 8)))
 
 
 (defun construct-board (puzzle)
@@ -40,54 +21,40 @@
          (cols  (board-cols board))
          (boxes (board-boxes board)))
     
-    (log:debug "setting up board elements")
+    (log:debug "creating board elements")
     (dotimes (i 9)
-      (setf (aref rows i) (make-element))
-      (setf (aref cols i) (make-element))
-      (setf (aref boxes i) (make-element)))
+      (aset rows i (make-element))
+      (aset cols i (make-element))
+      (aset boxes i (make-element)))
+
+    (log:debug "creating board cells")
+    (dotimes (i 81)
+      (aset cells i (make-cell)))
     
     (log:debug "entering main loop")
-    (loop for cell-val in puzzle
+    (loop for c-value in puzzle
        for (box-n box-p) in +cell-to-box-map+
-       for count from 0 to 3
-       for cell = (make-cell)
-       for (div rest) = (multiple-value-list (floor count 9))
-       for row = (aref rows div)
-       for col = (aref cols rest)
+       for c-num from 0
+       for cell = (aref cells c-num)
+       for (row-value col-value) = (multiple-value-list (floor c-num 9))
+       for row = (aref rows row-value)
+       for col = (aref cols col-value)
        for box = (aref boxes box-n)
        do (progn
-            (log:trace "count has reached " count)
-            (when (/= 0 cell-val)
-              (log:trace "cell number " count " has value " cell-val)
-              (setf (cell-domain cell) 0)
-              (setf (cell-value cell) cell-val))
+            (log:trace "c-num has reached ~2f" c-num)
+            (when (/= 0 c-value)
+              (log:trace "cell number ~2f" c-num " has value ~2f" c-value)
+              (setf (cell-domain cell) '())
+              (setf (cell-value cell) c-value)
+              (log:trace "cell value set"))
 
-            (setf (aref cells count) cell)
-            (setf (aref (element-cells row) rest) count)
-            (setf (aref (element-cells col) div) count)
-            (setf (aref (element-cells box) box-p) count)
+            (log:trace "adding cell to board")
+            (aset (element-cells row) col-value c-num)
+            (aset (element-cells col) row-value c-num)
+            (aset (element-cells box) box-p c-num)
 
-            (setf (cell-row cell) row)
-            (setf (cell-col cell) col)
-            (setf (cell-box cell) box)
-            (log:trace "cell: " cell)
-            ))
+            (log:trace "completing setup of cell ~2f" c-num)
+            (setf (cell-row cell) row-value)
+            (setf (cell-col cell) col-value)
+            (setf (cell-box cell) box-n)))
     board))
-
-    
-#|         (count 0))
-    (dolist (cell-val puzzle)
-      (multiple-value-bind (div rest) (floor count 9)
-        (let ((cell (aref cells count))
-              (row (aref rows div))
-              (col (aref cols rest)))
-          (when (/= 0 cell-val)
-            (setf (cell-domain cell) 0)
-            (setf (cell-value cell) cell-val))
-          (setf (aref row rest) cell)
-          (setf (aref col div) cell)
-          (setf (cell-row cell) row)
-          (setf (cell-col cell) col)
-        )))))
-|#
-    
