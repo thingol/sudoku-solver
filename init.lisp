@@ -42,17 +42,22 @@
        for box = (aref boxes box-n)
        do (progn
             (log:trace "c-num has reached ~2f" c-num)
-            (when (/= 0 c-value)
-              (log:trace "cell number ~2f" c-num " has value ~2f" c-value)
-              (setf (cell-domain cell) '())
-              (setf (cell-value cell) c-value)
-              (log:trace "cell value set"))
 
             (log:trace "adding cell to board")
             (aset (element-cells row) col-value c-num)
             (aset (element-cells col) row-value c-num)
             (aset (element-cells box) box-p c-num)
 
+            (when (/= 0 c-value)
+              (log:trace "cell number ~2f" c-num " has value ~2f" c-value)
+              (setf (cell-domain cell) '())
+              (setf (cell-value cell) c-value)
+              (log:trace "cell value set")
+
+              (push c-value (element-found-vals row))
+              (push c-value (element-found-vals col))
+              (push c-value (element-found-vals box))
+              (log:trace "found-vals updated"))
             (log:trace "completing setup of cell ~2f" c-num)
             (setf (cell-row cell) row-value)
             (setf (cell-col cell) col-value)
