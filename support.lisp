@@ -3,7 +3,6 @@
 (defun concat-strings (list)
   "A non-recursive function that concatenates a list of strings."
 
-  (log:trace "entry")
   (if (listp list)
       (with-output-to-string (s)
          (dolist (item list)
@@ -13,7 +12,6 @@
 (defun string-to-ints (string)
   "Converts a string to a list of single digit ints."
 
-  (log:trace "entry")
   (loop for c across string
        collect (string c) into ints
        finally (return (mapcar #'parse-integer ints))))
@@ -21,28 +19,37 @@
 (defun read-puzzle (fname)
   "Read a sudoku puzzle from disk."
 
-  (log:trace "entry")
   (with-open-file (s fname :direction :input)
            (loop for line = (read-line s nil nil)
               until (eq line nil)
               collect line into lines
               finally (return (string-to-ints (concat-strings lines))))))
 
-;; needs to be turned into a macro
-(defun get-row (board index)
+
+(defun print-board (board)
+  (loop
+     for row across (board-rows board)
+     do (loop
+           for cell across (element-cells row)
+           collect (cell-value (svref (board-cells board) cell)) into value-list
+           finally (format t "~{ ~a~^ ~} ~%" value-list))))
+
+(defmacro get-row (board cell)
   "Returns the actual row."
 
-  (aref (board-rows board) index))
+  `(aref (board-rows ,board) (cell-row ,cell)))
 
-(defun get-col (board index)
+(defun get-col (board cell)
   "Returns the actual column."
 
-  (aref (board-cols board) index))
+  `(aref (board-cols ,board) (cell-col ,cell)))
 
-(defun get-box (board index)
+(defun get-box (board cell)
   "Returns the actual box."
 
-  (aref (board-boxes board) index))
+  `(aref (board-boxes ,board) (cell-box ,cell)))
 
 (defmacro aset (array subscript value)
+  "Counterpart to aref, which should on reflection probably be called 'getref' or something..."
+  
   `(setf (aref ,array , subscript) ,value))

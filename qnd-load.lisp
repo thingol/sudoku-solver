@@ -1,4 +1,5 @@
 (load "package.lisp")
-(load "support.lisp")
 (load "structs.lisp")
+(load "support.lisp")
+(load "solve.lisp")
 (load "init.lisp")
