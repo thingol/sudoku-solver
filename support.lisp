@@ -39,12 +39,12 @@
 
   `(aref (board-rows ,board) (cell-row ,cell)))
 
-(defun get-col (board cell)
+(defmacro get-col (board cell)
   "Returns the actual column."
 
   `(aref (board-cols ,board) (cell-col ,cell)))
 
-(defun get-box (board cell)
+(defmacro get-box (board cell)
   "Returns the actual box."
 
   `(aref (board-boxes ,board) (cell-box ,cell)))
