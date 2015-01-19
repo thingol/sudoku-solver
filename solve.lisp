@@ -11,9 +11,9 @@ elements it belongs to."
           (setf domain (set-difference domain
                                        (element-found-vals (get-row board cell))))
           (setf domain (set-difference domain
-                                       (element-found-vals (get-col board (cell-col cell)))))
+                                       (element-found-vals (get-col board cell))))
           (set-difference domain
-                          (element-found-vals (get-box board (cell-box cell)))))
+                          (element-found-vals (get-box board cell))))
         domain)))
   
 (defun shave-board (board)
@@ -85,8 +85,8 @@ elements it belongs to."
 
 
   (not (or (member value (element-found-vals (get-row board cell)) :test #'=)
-           (member value (element-found-vals (get-col board (cell-col cell))) :test #'=)
-           (member value (element-found-vals (get-box board (cell-box cell))) :test #'=))))
+           (member value (element-found-vals (get-col board cell)) :test #'=)
+           (member value (element-found-vals (get-box board cell)) :test #'=))))
 
 (defun pop-value (board cell)
   (declare (optimize (debug 3)))
@@ -94,8 +94,8 @@ elements it belongs to."
   (setf (cell-value cell) 0)
   
   (pop (element-found-vals (get-row board cell)))
-  (pop (element-found-vals (get-col board (cell-col cell))))
-  (pop (element-found-vals (get-box board (cell-box cell)))))
+  (pop (element-found-vals (get-col board cell)))
+  (pop (element-found-vals (get-box board cell))))
 
 (defun push-value (board cell value)
   (declare (optimize (debug 3)))
@@ -103,5 +103,5 @@ elements it belongs to."
   (setf (cell-value cell) value)
   
   (push value (element-found-vals (get-row board cell)))
-  (push value (element-found-vals (get-col board (cell-col cell))))
-  (push value (element-found-vals (get-box board (cell-box cell)))))
+  (push value (element-found-vals (get-col board cell)))
+  (push value (element-found-vals (get-box board cell))))
