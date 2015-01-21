@@ -12,6 +12,7 @@
   (cells (make-array 9)))
 
 (defstruct board
+  (found-vals 0 :type (integer 0 81))
   (rows (make-array 9 :element-type 'element))
   (cols (make-array 9 :element-type 'element))
   (boxes (make-array 9 :element-type 'element))

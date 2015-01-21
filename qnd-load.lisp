@@ -3,3 +3,4 @@
 (load "support.lisp")
 (load "solve.lisp")
 (load "init.lisp")
+(load "main.lisp")

@@ -10,11 +10,8 @@
                                  (6 3) (6 4) (6 5) (7 3) (7 4) (7 5) (8 3) (8 4) (8 5)
                                  (6 6) (6 7) (6 8) (7 6) (7 7) (7 8) (8 6) (8 7) (8 8)))
 
-(defvar *boards*)
-
 (defun construct-board (puzzle)
   "Takes a list of ints and uses them to set up a sudoku board"
-  (declare (optimize (debug 3)))
 
   (let* ((board (make-board))
          (cells (board-cells board))
@@ -44,6 +41,7 @@
             (aset (element-cells box) box-p c-num)
 
             (when (/= 0 c-value)
+              (incf (board-found-vals board))
               (setf (cell-domain cell) '())
               (setf (cell-value cell) c-value)
 
@@ -57,7 +55,7 @@
 
 (defun load-puzzles (dirname)
   (let ((boards))
-
-  (cl-fad:walk-directory dirname #'(lambda (fname) (push (construct-board (read-puzzle fname))
-                                                         boards)))
-  boards))
+    (cl-fad:walk-directory dirname #'(lambda (fname)
+                                       (push (construct-board (read-puzzle fname))
+                                             boards)))
+    boards))

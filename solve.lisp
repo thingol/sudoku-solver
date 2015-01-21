@@ -1,31 +1,20 @@
 (in-package :org.kjerkreit.sudoku-solver)
 
-(defun shave (cell board)
-  "Returns a copy of the domain of a cell, sans values already found in the
-elements it belongs to."
-
-  ;; ugly fugly
-  (let ((domain (cell-domain cell)))
-    (if domain
-        (progn
-          (setf domain (set-difference domain
-                                       (element-found-vals (get-row board cell))))
-          (setf domain (set-difference domain
-                                       (element-found-vals (get-col board cell))))
-          (set-difference domain
-                          (element-found-vals (get-box board cell))))
-        domain)))
-  
 (defun shave-board (board)
-  "Calls (shave cell board) for all cells."
+  "Removes illegal values from the domains of cells."
 
-  (map nil #'(lambda (cell)
+  (flet ((shave (cell)
+           (let ((domain (cell-domain cell)))
+             (when domain
                (setf (cell-domain cell)
-                     (shave cell board)))
-       (board-cells board)))
+                     (set-difference domain
+                                     (union (element-found-vals (get-row board cell))
+                                            (union (element-found-vals (get-col board cell))
+                                                   (element-found-vals (get-box board cell))))))))))
+    (map nil #'shave (board-cells board))))
 
 (defun find-single-vals (board)
-  (declare (optimize (debug 3)))
+  "Find and sets value for cell with single member domain."
 
   ;; ugly fugly
   (let ((found nil))
@@ -37,6 +26,7 @@ elements it belongs to."
                      (push (car domain) (element-found-vals (get-box board cell)))
                      (setf (cell-value cell) (car domain))
                      (setf (cell-domain cell) nil)
+                     (incf (board-found-vals board))
                      (setf found t))))
          (board-cells board))
     found))
@@ -68,9 +58,16 @@ elements it belongs to."
         (recur)
         nil))))
 
+(defun pre-proc-board (board)
+  "Shave board and look for single value domains until all have been found.
+If lucky this will result in a solved puzzle."
+
+  (loop
+     do (shave-board board)
+     until (not (find-single-vals board))))
+
 (defun get-free-cells (board)
   "Returns a vector with all free cells sorted by most-constrained."
-  (declare (optimize (debug 3)))
 
   (sort (remove-if #'(lambda (cell)
                        (/= (cell-value cell) 0))
@@ -81,15 +78,13 @@ elements it belongs to."
 
 
 (defun check-value (board cell value)
-  (declare (optimize (debug 3)))
-
+  "Checks wether value is legal for cell."
 
   (not (or (member value (element-found-vals (get-row board cell)) :test #'=)
            (member value (element-found-vals (get-col board cell)) :test #'=)
            (member value (element-found-vals (get-box board cell)) :test #'=))))
 
 (defun pop-value (board cell)
-  (declare (optimize (debug 3)))
   
   (setf (cell-value cell) 0)
   
@@ -98,7 +93,6 @@ elements it belongs to."
   (pop (element-found-vals (get-box board cell))))
 
 (defun push-value (board cell value)
-  (declare (optimize (debug 3)))
 
   (setf (cell-value cell) value)
   
