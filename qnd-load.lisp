@@ -4,3 +4,5 @@
 (load "solve.lisp")
 (load "init.lisp")
 (load "main.lisp")
+
+(sudoku-solver:main)

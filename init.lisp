@@ -53,9 +53,5 @@
             (setf (cell-box cell) box-n)))
     board))
 
-(defun load-puzzles (dirname)
-  (let ((boards))
-    (cl-fad:walk-directory dirname #'(lambda (fname)
-                                       (push (construct-board (read-puzzle fname))
-                                             boards)))
-    boards))
+(defmacro load-puzzles (fname &optional (n 10))
+    `(mapcar #'construct-board (read-puzzles ,fname ,n)))

@@ -1,5 +1,38 @@
 (in-package :org.kjerkreit.sudoku-solver)
 
+(defun check-value (board cell value)
+  "Checks wether value is legal for cell."
+
+  (not (or (member value (element-found-vals (get-row board cell)) :test #'=)
+           (member value (element-found-vals (get-col board cell)) :test #'=)
+           (member value (element-found-vals (get-box board cell)) :test #'=))))
+
+(defun get-free-cells (board)
+  "Returns a vector with all free cells sorted by most-constrained."
+
+  (sort (remove-if #'(lambda (cell)
+                       (/= (cell-value cell) 0))
+                   (board-cells board))
+        #'(lambda (list0 list1)
+            (<= (list-length list0) (list-length list1)))
+        :key #'cell-domain))
+
+(defun pop-value (board cell)
+  
+  (setf (cell-value cell) 0)
+  
+  (pop (element-found-vals (get-row board cell)))
+  (pop (element-found-vals (get-col board cell)))
+  (pop (element-found-vals (get-box board cell))))
+
+(defun push-value (board cell value)
+
+  (setf (cell-value cell) value)
+  
+  (push value (element-found-vals (get-row board cell)))
+  (push value (element-found-vals (get-col board cell)))
+  (push value (element-found-vals (get-box board cell))))
+
 (defun shave-board (board)
   "Removes illegal values from the domains of cells."
 
@@ -65,37 +98,3 @@ If lucky this will result in a solved puzzle."
   (loop
      do (shave-board board)
      until (not (find-single-vals board))))
-
-(defun get-free-cells (board)
-  "Returns a vector with all free cells sorted by most-constrained."
-
-  (sort (remove-if #'(lambda (cell)
-                       (/= (cell-value cell) 0))
-                   (board-cells board))
-        #'(lambda (list0 list1)
-            (<= (list-length list0) (list-length list1)))
-        :key #'cell-domain))
-
-
-(defun check-value (board cell value)
-  "Checks wether value is legal for cell."
-
-  (not (or (member value (element-found-vals (get-row board cell)) :test #'=)
-           (member value (element-found-vals (get-col board cell)) :test #'=)
-           (member value (element-found-vals (get-box board cell)) :test #'=))))
-
-(defun pop-value (board cell)
-  
-  (setf (cell-value cell) 0)
-  
-  (pop (element-found-vals (get-row board cell)))
-  (pop (element-found-vals (get-col board cell)))
-  (pop (element-found-vals (get-box board cell))))
-
-(defun push-value (board cell value)
-
-  (setf (cell-value cell) value)
-  
-  (push value (element-found-vals (get-row board cell)))
-  (push value (element-found-vals (get-col board cell)))
-  (push value (element-found-vals (get-box board cell))))
