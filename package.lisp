@@ -4,4 +4,5 @@
 
 (defpackage #:org.kjerkreit.sudoku-solver
   (:nicknames "sudoku-solver" :sudoku-solver)
-  (:use :cl :log4cl))
+  (:use :cl)
+  (:export #:main))

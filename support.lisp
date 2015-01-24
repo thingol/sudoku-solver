@@ -16,15 +16,15 @@
        collect (string c) into ints
        finally (return (mapcar #'parse-integer ints))))
 
-(defun read-puzzle (fname)
+(defun read-puzzles (fname n)
   "Read a sudoku puzzle from disk."
 
   (with-open-file (s fname :direction :input)
            (loop for line = (read-line s nil nil)
+              for i from 1 to (parse-integer n)
               until (eq line nil)
-              collect line into lines
-              finally (return (string-to-ints (concat-strings lines))))))
-
+              collect (string-to-ints line) into lines
+              finally (return lines))))
 
 (defun print-board (board)
   (loop

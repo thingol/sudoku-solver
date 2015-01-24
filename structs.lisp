@@ -1,5 +1,8 @@
 (in-package :org.kjerkreit.sudoku-solver)
 
+(eval-when (:compile-toplevel :execute :load-toplevel)
+  (declaim (sb-ext:muffle-conditions style-warning)))
+
 (defstruct cell
   (row 0 :type (integer 0 8))
   (col 0 :type (integer 0 8))
