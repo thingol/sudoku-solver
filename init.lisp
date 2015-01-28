@@ -42,12 +42,12 @@
 
             (when (/= 0 c-value)
               (incf (board-found-vals board))
-              (setf (cell-domain cell) '())
+              (setf (cell-domain cell) #*000000000)
               (setf (cell-value cell) c-value)
 
-              (push c-value (element-found-vals row))
-              (push c-value (element-found-vals col))
-              (push c-value (element-found-vals box)))
+              (setf (sbit (element-found-vals row) c-value))
+              (setf (sbit (element-found-vals col) c-value))
+              (setf (sbit (element-found-vals box) c-value)))
             (setf (cell-row cell) row-value)
             (setf (cell-col cell) col-value)
             (setf (cell-box cell) box-n)))

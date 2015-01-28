@@ -8,11 +8,11 @@
   (col 0 :type (integer 0 8))
   (box 0 :type (integer 0 8))
   (value 0 :type (integer 0 9))
-  (domain '(1 2 3 4 5 6 7 8 9) :type list))
+  (domain (make-array 9 :element-type 'bit :initial-element 1)))
 
 (defstruct element
-  (found-vals '() :type list)
-  (cells (make-array 9)))
+  (found-vals (make-array 9 :element-type 'bit :initial-element 0))
+  (cells (make-array 9 :element-type 'cell)))
 
 (defstruct board
   (found-vals 0 :type (integer 0 81))
